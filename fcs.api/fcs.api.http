@@ -1,0 +1,6 @@
+@fcs.api_HostAddress = http://localhost:5151
+
+GET {{fcs.api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

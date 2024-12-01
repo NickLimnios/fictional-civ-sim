@@ -1,0 +1,34 @@
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: ./fcs.api
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
+    volumes:
+      - api-data:/app/Data # Mount volume for SQLite persistence
+    networks:
+      - civ-network
+
+  ui:
+    build:
+      context: ./fcs.ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:5000/api
+    networks:
+      - civ-network
+
+volumes:
+  api-data: # Define a named volume for SQLite
+    driver: local
+
+networks:
+  civ-network:
+    driver: bridge

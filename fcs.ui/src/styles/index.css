@@ -1,0 +1,163 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: "Courier New", Courier, monospace;
+  background-color: #121212;
+  color: #f4f4f4;
+  line-height: 1.6;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  padding: 20px;
+}
+
+.main {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  max-width: 20%;
+  margin-right: 100px;
+}
+
+.civilization-list {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(65px, auto)
+  ); /* Flexible column sizing */
+  gap: 10px; /* Minimal gap between tags */
+  justify-content: center;
+  align-content: center;
+  margin-bottom: 100px;
+}
+
+.civilization-tag {
+  display: inline-block; /* Make tags flow like bricks */
+  cursor: pointer;
+  /* color: #f4f4f4; */
+  color: hsl(var(--population-hue), 70%, 50%);
+  text-align: center;
+  white-space: nowrap;
+  padding: 5px 10px; /* Add minimal padding */
+  transition: font-size 0.5s ease, text-decoration 0.5s ease, color 0.5s ease;
+}
+
+.civilization-tag:hover {
+  color: #679a8c;
+  transform: scale(1.1); /* Slight zoom on hover */
+}
+
+.civilization-tag.selected {
+  /* color: #fff;*/
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.civilization-tag.crossed-out {
+  color: #777;
+  text-decoration: line-through;
+}
+
+.add-civ-form {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.add-civ-form input {
+  background: none;
+  border: none;
+  border-bottom: 2px solid #f4f4f4;
+  color: #f4f4f4;
+  font-size: 1rem;
+  padding: 5px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.add-civ-form input:focus {
+  border-color: #679a8c;
+}
+
+.add-civ-form button {
+  align-self: flex-start;
+}
+
+.civilization-details {
+  flex: 1;
+  padding: 20px;
+}
+
+.details-info {
+  margin-bottom: 25px;
+}
+
+.console {
+  max-height: 400px;
+  overflow-y: auto;
+  position: relative;
+  padding: 10px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.console::-webkit-scrollbar {
+  display: none;
+}
+
+.console p {
+  margin: 5px 0;
+}
+
+.console .typing {
+  /* color: #89c9b8; */
+  /* font-style: italic; */
+  animation: blink-cursor 1s step-end infinite;
+}
+
+/* @keyframes blink-cursor {
+  50% {
+    opacity: 0;
+  }
+} */
+
+button {
+  background: none;
+  border: 2px solid #f4f4f4;
+  color: #f4f4f4;
+  padding: 5px 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #f4f4f4;
+  color: #121212;
+}
+
+button.hidden {
+  display: none;
+}
