@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5000/api"; // Local development
+const API_BASE_URL = "https://fictional-civ-sim-api.onrender.com/api"; // Local development
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
