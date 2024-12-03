@@ -1,29 +1,29 @@
-# Use the .NET runtime to run the application
+# Base image for the .NET runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 
-# Set the working directory inside the container
-USER app
+# Set working directory inside the container
 WORKDIR /app
 
-# Expose the default ports
+# Expose required ports
 EXPOSE 8080
-EXPOSE 8081
 EXPOSE 5000
 
-# Use the .NET 8 SDK to build the application
+# Add a writable directory for SQLite database
+RUN mkdir -p /app/Data && chmod -R 777 /app/Data
+
+# Image for building the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 
-# Copy the project files
+# Set working directory for build
 WORKDIR /src
-COPY ["fcs.api.csproj", "."]
 
-# Restore dependencies
+# Copy project file(s) and restore dependencies
+COPY ["fcs.api.csproj", "."]
 RUN dotnet restore "./fcs.api.csproj"
 
-# Copy the project files
+# Copy the rest of the application files
 COPY . .
-WORKDIR "/src/."
 
 # Build the application
 RUN dotnet build "./fcs.api.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -33,12 +33,18 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./fcs.api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# Set the working directory for the runtime image
+# Final runtime image
 FROM base AS final
+
+# Set working directory inside the container
 WORKDIR /app
 
-# Copy the published application from the previous stage
+# Copy published application from build stage
 COPY --from=publish /app/publish .
 
-# Set the command to run the application
+# Set default user for security
+RUN adduser --disabled-password appuser && chown -R appuser:appuser /app
+USER appuser
+
+# Command to run the application
 ENTRYPOINT ["dotnet", "fcs.api.dll"]

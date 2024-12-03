@@ -38,14 +38,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Ensure database directory exists if necessary
-var databaseDir = Path.GetDirectoryName(connectionString.Split('=')[1]);
-if (!Directory.Exists(databaseDir))
-{
-    Directory.CreateDirectory(databaseDir);
-}
-
-
 // Use the CORS policy
 app.UseCors("AllowAll");
 
