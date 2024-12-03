@@ -6,18 +6,16 @@ using fcs.api.Data.UnitOfWork.Interfaces;
 using fcs.api.Data.UnitOfWork;
 using fcs.api.Services.Interfaces;
 using fcs.api.Services;
-using fcs.api.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-// Configure DbContext to use SQLite
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite("Data Source=Data/civilization.db")); // Path to SQLite database file
+// Get the connection string from appsettings.json
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Alternatively, configure DbContext to use in memory db
-// builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("CivilizationDb"));
+// Configure DbContext to use SQLite
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ICivilizationRepository, CivilizationRepository>();
@@ -30,16 +28,6 @@ builder.Services.AddSwaggerGen();
 // Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFCSUIApp", policy =>
-    {
-        policy.WithOrigins("http://localhost:3000", "http://ui") // Allow fcs.ui app
-              .AllowAnyHeader()                   // Allow any headers
-              .AllowAnyMethod();                  // Allow any HTTP methods
-    });
-});
-
-builder.Services.AddCors(options =>
-{
     options.AddPolicy("AllowAll", builder =>
     {
         builder.AllowAnyOrigin()
@@ -50,22 +38,23 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Ensure database directory exists if necessary
+var databaseDir = Path.GetDirectoryName(connectionString.Split('=')[1]);
+if (!Directory.Exists(databaseDir))
+{
+    Directory.CreateDirectory(databaseDir);
+}
+
+
 // Use the CORS policy
 app.UseCors("AllowAll");
 
-//Seed for in memory db
-//using (var scope = app.Services.CreateScope())
-//{
-//    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    DataSeeder.SeedData(context);
-//}
-
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
